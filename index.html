@@ -93,45 +93,202 @@
 
   .nav-links a:hover { color: var(--accent); }
 
-  /* Hero */
+  /* Hero (centered single-column landing) */
   .hero {
-    padding: 80px 0 64px;
+    min-height: calc(100vh - 60px);
+    padding: 32px 24px 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      /* spotlight halo centred on the card */
+      radial-gradient(ellipse 55% 60% at 50% 50%, rgba(110, 231, 215, 0.10), transparent 70%),
+      /* dotted grid texture */
+      radial-gradient(rgba(110, 231, 215, 0.09) 1px, transparent 1px) 0 0 / 26px 26px,
+      /* four-corner colour washes so the gradient fills the whole viewport on any screen */
+      radial-gradient(ellipse 80% 75% at 0% 0%, rgba(110, 231, 215, 0.25), transparent 60%),
+      radial-gradient(ellipse 80% 75% at 100% 0%, rgba(99, 102, 241, 0.20), transparent 60%),
+      radial-gradient(ellipse 80% 75% at 0% 100%, rgba(99, 102, 241, 0.18), transparent 60%),
+      radial-gradient(ellipse 80% 75% at 100% 100%, rgba(110, 231, 215, 0.22), transparent 60%),
+      /* gentle diagonal base — never lets a corner go fully dark */
+      linear-gradient(135deg, #0c1224 0%, #131a2b 40%, #0e1422 70%, #0a0e1a 100%);
   }
 
-  .status-pill {
+  /* Floating accent orbs (animated, CSS-only).
+     Sized in vw so they scale with the viewport — no more "cut off" edges on wide laptops. */
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .hero::before {
+    width: clamp(420px, 60vw, 900px);
+    height: clamp(420px, 60vw, 900px);
+    top: -14%;
+    left: -10%;
+    background: radial-gradient(circle, rgba(110, 231, 215, 0.55), transparent 60%);
+    animation: orb-drift-a 16s ease-in-out infinite;
+  }
+
+  .hero::after {
+    width: clamp(460px, 65vw, 1000px);
+    height: clamp(460px, 65vw, 1000px);
+    bottom: -18%;
+    right: -10%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.5), transparent 60%);
+    animation: orb-drift-b 20s ease-in-out infinite;
+  }
+
+  @keyframes orb-drift-a {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(60px, 80px) scale(1.08); }
+  }
+
+  @keyframes orb-drift-b {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-80px, -50px) scale(1.05); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    width: 100%;
+    background: rgba(19, 26, 43, 0.55);
+    border: 1px solid rgba(110, 231, 215, 0.12);
+    border-radius: 18px;
+    padding: 32px 32px 30px;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  /* Subtle mint highlight line along the top edge of the card */
+  .hero-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(110, 231, 215, 0.5), transparent);
+    border-radius: 1px;
+  }
+
+  /* Make sure the chevron sits above the orbs too */
+  .scroll-cue { z-index: 1; }
+
+  .hero .hero-role { margin-bottom: 20px; }
+  .hero .hero-desc { margin-bottom: 22px; }
+  .hero .hero-meta { margin-bottom: 22px; }
+  .hero .icon-row { margin-bottom: 0; }
+
+  /* Soft greeting line above the name */
+  .hero-greeting {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 14px;
-    background: var(--accent-soft);
-    border: 1px solid rgba(110, 231, 215, 0.2);
-    border-radius: 999px;
-    font-size: 13px;
-    color: var(--accent);
-    margin-bottom: 24px;
-    font-weight: 500;
   }
 
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent-glow);
-    animation: pulse 2s ease-in-out infinite;
+  .hero-greeting .wave {
+    display: inline-block;
+    animation: wave 2.4s ease-in-out infinite;
+    transform-origin: 70% 70%;
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(14deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
   }
 
   h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
     font-weight: 700;
     letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-bottom: 16px;
+    line-height: 1.05;
+    margin-bottom: 18px;
+  }
+
+  h1 .name-accent {
+    background: linear-gradient(120deg, var(--accent), #a5f3e8 50%, #6ee7d7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Centered helpers for hero blocks */
+  .hero .hero-desc { margin-left: auto; margin-right: auto; }
+  .hero .hero-meta { justify-content: center; }
+  .hero .icon-row { justify-content: center; }
+
+  /* Scroll cue at the bottom of the hero */
+  .scroll-cue {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 0 0 6px rgba(110, 231, 215, 0.08), 0 6px 20px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    animation: scroll-bounce 1.6s ease-in-out infinite;
+  }
+
+  .scroll-cue::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    opacity: 0;
+    animation: scroll-pulse 1.8s ease-out infinite;
+    pointer-events: none;
+  }
+
+  .scroll-cue:hover {
+    background: rgba(110, 231, 215, 0.22);
+    box-shadow: 0 0 0 8px rgba(110, 231, 215, 0.12), 0 8px 28px rgba(110, 231, 215, 0.2);
+  }
+
+  @keyframes scroll-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  @keyframes scroll-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
   }
 
   .hero-role {
@@ -555,14 +712,321 @@
   .contact-intro {
     font-size: 1.05rem;
     color: var(--text-muted);
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     max-width: 580px;
   }
 
-  .contact-links {
+  /* Icon-only row used in the hero */
+  .icon-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    padding: 0;
+    position: relative;
+  }
+
+  .icon-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(110, 231, 215, 0.18);
+  }
+
+  .icon-btn[data-copy]:active {
+    transform: translateY(0);
+  }
+
+  /* Tooltip on hover (shows label) */
+  .icon-btn::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    color: var(--text);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    border: 1px solid var(--border);
+    transition: opacity 0.2s ease;
+  }
+
+  .icon-btn:hover::after,
+  .icon-btn:focus-visible::after {
+    opacity: 1;
+  }
+
+  .icon-btn.copied {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+
+  .icon-btn.copied::after {
+    content: "Copied!";
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  /* Larger variant of icon-btn used in the contact section */
+  .icon-btn--lg {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+  }
+
+  /* Morphing icons inside .icon-btn (default ↔ check on copy) */
+  .icon-btn svg {
+    transition: opacity 0.2s ease, transform 0.25s ease;
+  }
+
+  .icon-btn .icon-check {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0.6);
+    color: var(--accent);
+  }
+
+  .icon-btn.copied .icon-default {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  .icon-btn.copied .icon-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Wrapper used in the contact section to pair icon + caption */
+  .contact-icons {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 32px;
+  }
+
+  .contact-icon-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .icon-caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    position: relative;
+    height: 14px;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .icon-caption .cap-success {
+    position: absolute;
+    inset: 0;
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .icon-caption .cap-default {
+    transition: opacity 0.2s ease;
+    display: inline-block;
+  }
+
+  .contact-icon-wrap:has(.icon-btn.copied) .cap-default {
+    opacity: 0;
+  }
+
+  .contact-icon-wrap:has(.icon-btn.copied) .cap-success {
+    opacity: 1;
+  }
+
+  /* Mobile navigation toggle (hamburger) */
+  .nav-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    position: relative;
+  }
+
+  .nav-toggle svg {
+    position: absolute;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav-toggle .icon-close {
+    opacity: 0;
+    transform: rotate(-90deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] .icon-menu {
+    opacity: 0;
+    transform: rotate(90deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] .icon-close {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+
+  /* Larger tile-style contact cards in the Contact section */
+  .contact-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .contact-tile {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-tile:hover {
+    border-color: rgba(110, 231, 215, 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+  }
+
+  .contact-tile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 6px;
+    transition: background 0.25s ease;
+  }
+
+  .contact-tile-icon svg {
+    position: absolute;
+    transition: opacity 0.2s ease, transform 0.25s ease;
+  }
+
+  .contact-tile-icon .icon-check {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  .contact-tile.copied .contact-tile-icon {
+    background: rgba(110, 231, 215, 0.25);
+  }
+
+  .contact-tile.copied .icon-default {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  .contact-tile.copied .icon-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .contact-tile-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .contact-tile-value {
+    font-size: 0.95rem;
+    color: var(--text);
+    font-weight: 500;
+    word-break: break-all;
+  }
+
+  .contact-tile-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 6px;
+    height: 14px;
+    position: relative;
+  }
+
+  .contact-tile-hint .hint-success {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    color: var(--accent);
+    transition: opacity 0.2s ease;
+  }
+
+  .contact-tile.copied .contact-tile-hint .hint-default {
+    opacity: 0;
+  }
+
+  .contact-tile.copied .contact-tile-hint .hint-success {
+    opacity: 1;
+  }
+
+  .contact-tile-hint .hint-default {
+    transition: opacity 0.2s ease;
+  }
+
+  /* subtle bottom shimmer when copied */
+  .contact-tile.copied::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 2px;
+    background: var(--accent);
+    animation: shimmer 1.6s ease-out;
+  }
+
+  @keyframes shimmer {
+    0% { transform: scaleX(0); transform-origin: left; }
+    50% { transform: scaleX(1); transform-origin: left; }
+    100% { transform: scaleX(0); transform-origin: right; }
   }
 
   /* Footer */
@@ -577,24 +1041,75 @@
   footer .container { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; }
 
   /* Responsive */
+  @media (max-width: 720px) {
+    nav { position: sticky; }
+
+    .nav-toggle {
+      display: inline-flex;
+    }
+
+    /* Turn the desktop horizontal links into a dropdown panel on mobile */
+    .nav-links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 0;
+      background: rgba(10, 14, 26, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 0;
+      max-height: 0;
+      overflow: hidden;
+      visibility: hidden;
+      transition: max-height 0.25s ease, visibility 0.25s ease;
+    }
+
+    nav.open .nav-links {
+      max-height: 320px;
+      visibility: visible;
+    }
+
+    .nav-links li { width: 100%; }
+
+    .nav-links a {
+      display: block;
+      padding: 14px 24px;
+      font-size: 15px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-links li:last-child a { border-bottom: 0; }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+  }
+
   @media (max-width: 600px) {
     .nav-inner { padding: 14px 20px; }
-    .nav-links { gap: 14px; }
-    .nav-links a { font-size: 13px; }
     .container { padding: 0 20px; }
-    .hero { padding: 56px 0 40px; }
+    .hero {
+      min-height: auto;
+      padding: 56px 20px 80px;
+    }
+    .hero-content {
+      padding: 32px 22px;
+      border-radius: 14px;
+    }
     section { padding: 44px 0; }
     .card { padding: 20px; }
     .highlight-card { padding: 18px; }
     .card-header { flex-direction: column; align-items: flex-start; }
     .card-meta { font-size: 11px; }
-    .cta-row { width: 100%; }
-    .btn { flex: 1; justify-content: center; min-width: 0; }
     .stat-num { font-size: 1.3rem; }
-  }
-
-  @media (max-width: 480px) {
-    .nav-links { display: none; }
+    .contact-icons { gap: 24px; justify-content: center; }
+    .icon-btn--lg { width: 56px; height: 56px; border-radius: 14px; }
   }
 
   /* Focus styles */
@@ -607,59 +1122,66 @@
 </head>
 <body>
 
-<nav>
+<nav id="primary-nav">
   <div class="nav-inner">
     <a href="#" class="nav-brand">madhu<span>.</span></a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#products">Products</a></li>
       <li><a href="#work">Work</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+      <svg class="icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
 </nav>
 
-<main class="container">
+<!-- Hero (full-bleed, outside the bounded container so its gradient spans the viewport) -->
+<header class="hero">
+  <div class="hero-content">
+      <div class="hero-greeting"><span class="wave">👋</span> Hi, I'm</div>
+      <h1><span class="name-accent">Madhu Soodhan</span>.</h1>
+      <p class="hero-role">
+        <strong>Senior Technical Lead — Machine Learning &amp; Computer Vision</strong>
+      </p>
+      <p class="hero-desc">
+        Over 9 years shipping computer vision and deep learning across the stack — stereo-vision SDKs and embedded platforms at e-con Systems, deep-learning models for autonomous navigation at Mobiveil, and cloud &amp; edge CV products at MulticoreWare. US patent on Human 3D pose estimation for gait analysis, ACM-published research on evolutionary CNN compression, and a flagship customer engagement of 10+ releases over 4 years.
+      </p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Chennai, India
+        </span>
+        <span class="hero-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          9+ years experience
+        </span>
+        <span class="hero-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <a href="https://patents.google.com/patent/US12303255B1/" target="_blank" rel="noopener">US Patent holder</a>
+        </span>
+      </div>
+      <div class="icon-row">
+        <button type="button" class="icon-btn" aria-label="Copy email address" data-tooltip="Copy email" data-copy="madhusoodhans1412@gmail.com">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </button>
+        <button type="button" class="icon-btn" aria-label="Copy phone number" data-tooltip="Copy phone" data-copy="+91 9791085878">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </button>
+        <a href="https://www.linkedin.com/in/madhusoodhan1412/" target="_blank" rel="noopener" class="icon-btn" aria-label="Open LinkedIn profile" data-tooltip="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+      </div>
+    </div>
+  <a href="#about" class="scroll-cue" aria-label="Scroll to About">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </a>
+</header>
 
-  <!-- Hero -->
-  <header class="hero">
-    <div class="status-pill">
-      <span class="status-dot"></span>
-      Open to Lead / Tech Lead roles in ML &amp; CV
-    </div>
-    <h1>Madhu Soodhan</h1>
-    <p class="hero-role">
-      <strong>Senior Technical Lead — Machine Learning &amp; Computer Vision</strong>
-    </p>
-    <p class="hero-desc">
-      Over 9 years shipping computer vision and deep learning across the stack — stereo-vision SDKs and embedded platforms at e-con Systems, deep-learning models for autonomous navigation at Mobiveil, and cloud &amp; edge CV products at MulticoreWare. US patent on Human 3D pose estimation for gait analysis, ACM-published research on evolutionary CNN compression, and a flagship customer engagement of 10+ releases over 4 years.
-    </p>
-    <div class="hero-meta">
-      <span class="hero-meta-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Chennai, India
-      </span>
-      <span class="hero-meta-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        9+ years experience
-      </span>
-      <span class="hero-meta-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <a href="https://patents.google.com/patent/US12303255B1/" target="_blank" rel="noopener">US Patent holder</a>
-      </span>
-    </div>
-    <div class="cta-row">
-      <a href="mailto:madhusoodhans1412@gmail.com" class="btn btn-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        Get in touch
-      </a>
-      <a href="https://www.linkedin.com/in/madhusoodhan1412/" target="_blank" rel="noopener" class="btn btn-secondary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-        LinkedIn
-      </a>
-    </div>
-  </header>
+<main class="container">
 
   <!-- About -->
   <section id="about" class="about">
@@ -998,15 +1520,29 @@
     <p class="contact-intro">
       I'm open to Tech Lead and Lead Engineer roles in computer vision and machine learning. If you're building something at this intersection — research, products, or platforms — I'd be glad to hear about it.
     </p>
-    <div class="contact-links">
-      <a href="mailto:madhusoodhans1412@gmail.com" class="btn btn-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        madhusoodhans1412@gmail.com
-      </a>
-      <a href="https://www.linkedin.com/in/madhusoodhan1412/" target="_blank" rel="noopener" class="btn btn-secondary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-        Connect on LinkedIn
-      </a>
+    <div class="contact-icons">
+      <div class="contact-icon-wrap">
+        <button type="button" class="icon-btn icon-btn--lg" aria-label="Copy email address" data-tooltip="Copy email" data-copy="madhusoodhans1412@gmail.com">
+          <svg class="icon-default" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <svg class="icon-check" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <span class="icon-caption"><span class="cap-default">Email</span><span class="cap-success">Copied!</span></span>
+      </div>
+
+      <div class="contact-icon-wrap">
+        <button type="button" class="icon-btn icon-btn--lg" aria-label="Copy phone number" data-tooltip="Copy phone" data-copy="+91 9791085878">
+          <svg class="icon-default" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <svg class="icon-check" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <span class="icon-caption"><span class="cap-default">Phone</span><span class="cap-success">Copied!</span></span>
+      </div>
+
+      <div class="contact-icon-wrap">
+        <a href="https://www.linkedin.com/in/madhusoodhan1412/" target="_blank" rel="noopener" class="icon-btn icon-btn--lg" aria-label="Open LinkedIn profile" data-tooltip="LinkedIn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <span class="icon-caption"><span class="cap-default">LinkedIn</span></span>
+      </div>
     </div>
   </section>
 
@@ -1021,6 +1557,69 @@
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Click-to-copy with visual feedback for any element with data-copy
+  document.addEventListener('click', async (e) => {
+    const trigger = e.target.closest('[data-copy]');
+    if (!trigger) return;
+    e.preventDefault();
+    const text = trigger.dataset.copy;
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      ok = true;
+    } catch (_) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (_) { /* swallow */ }
+    }
+    if (!ok) return;
+    trigger.classList.add('copied');
+    clearTimeout(trigger._copyTimer);
+    trigger._copyTimer = setTimeout(() => {
+      trigger.classList.remove('copied');
+    }, 1800);
+  });
+
+  // Mobile nav toggle
+  (function () {
+    const nav = document.getElementById('primary-nav');
+    const toggle = nav.querySelector('.nav-toggle');
+    const links = nav.querySelector('.nav-links');
+
+    function setOpen(open) {
+      nav.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    }
+
+    toggle.addEventListener('click', () => {
+      setOpen(!nav.classList.contains('open'));
+    });
+
+    // Close after clicking any link inside the panel
+    links.addEventListener('click', (e) => {
+      if (e.target.closest('a')) setOpen(false);
+    });
+
+    // Close when clicking outside the nav
+    document.addEventListener('click', (e) => {
+      if (!nav.classList.contains('open')) return;
+      if (!nav.contains(e.target)) setOpen(false);
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('open')) setOpen(false);
+    });
+  })();
 </script>
 
 </body>
